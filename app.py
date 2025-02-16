@@ -1,6 +1,6 @@
 import os
 os.system("pip install git+https://github.com/AI4Bharat/IndicTrans.git")
-import os
+
 import streamlit as st
 import torch
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
@@ -27,7 +27,7 @@ def translate_text(text, src_lang, tgt_lang):
     return translation
 
 # Streamlit UI
-st.title("Kashmiri Translator by AasifCodes")
+st.title("Kashmiri Translator by Aasif Codes")
 st.write("Translate between English and Kashmiri.")
 
 source_lang = st.selectbox("Select Source Language:", ("English", "Kashmiri"))
@@ -44,7 +44,4 @@ if st.button("Translate"):
     else:
         st.warning("Please enter text to translate.")
 
-        st.success(f"Translation: {translated_text}")
-    else:
-        st.warning("Please enter text to translate.")
 
