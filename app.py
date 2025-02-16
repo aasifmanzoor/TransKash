@@ -19,14 +19,7 @@ def load_model():
 tokenizer, model, device = load_model()
 ip = IndicProcessor(inference=True)
 
-def translate_text(text, direction, target_script):
-    if direction == "English to Kashmiri":
-        src_lang = "eng_Latn"
-        tgt_lang = "kas_Arab" if target_script == "Arabic" else "kas_Deva"
-    else:
-        src_lang = "kas_Arab" if ip.is_arabic(text) else "kas_Deva"
-        tgt_lang = "eng_Latn"
-    
+def translate_text(text, src_lang, tgt_lang):
     inputs = tokenizer([text], truncation=True, padding="longest", return_tensors="pt").to(device)
     with torch.no_grad():
         output_tokens = model.generate(**inputs, max_length=256, num_beams=5)
@@ -34,16 +27,23 @@ def translate_text(text, direction, target_script):
     return translation
 
 # Streamlit UI
-st.title("Kashmiri Translator by Aasif Codes")
-st.write("Translate between English and Kashmiri (Arabic or Devanagari script).")
+st.title("Kashmiri Translator by AasifCodes")
+st.write("Translate between English and Kashmiri.")
+
+source_lang = st.selectbox("Select Source Language:", ("English", "Kashmiri"))
+target_lang = st.selectbox("Select Target Language:", ("English", "Kashmiri"))
 
 text_input = st.text_area("Enter text:")
-direction = st.radio("Translation Direction:", ("English to Kashmiri", "Kashmiri to English"))
-script_option = None if direction == "Kashmiri to English" else st.radio("Select Kashmiri Script:", ("Arabic", "Devanagari"))
 
 if st.button("Translate"):
     if text_input.strip():
-        translated_text = translate_text(text_input, direction, script_option)
+        src_lang = "eng_Latn" if source_lang == "English" else "kas_Arab"
+        tgt_lang = "kas_Arab" if target_lang == "Kashmiri" else "eng_Latn"
+        translated_text = translate_text(text_input, src_lang, tgt_lang)
+        st.text_area("Translation:", translated_text, height=100)
+    else:
+        st.warning("Please enter text to translate.")
+
         st.success(f"Translation: {translated_text}")
     else:
         st.warning("Please enter text to translate.")
